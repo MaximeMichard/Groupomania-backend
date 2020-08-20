@@ -1,10 +1,10 @@
 const express = require('express'); // Importation package Express --> Framework Node.JS //
 const bodyParser = require('body-parser'); // Importation package BodyParser --> Extrait Objet -> Format JSON//
-const mongoose = require('mongoose'); //Importation package mongoose --> Connection Base de donnée (mongo DB) //
 const path= require ('path'); //Importation package Path --> Fournit des utilitaires pour travailler avec les chemins de fichiers et de répertoires  // 
+const helmet= require ('helmet'); 
+/* const postRoutes= require ('./routes/post'); */
+const userRoutes= require ('./routes/user');
 
-/* const sauceRoutes = require('./routes/sauce'); //Importation ficher Routes/sauce.js //
-const userRoutes = require('./routes/user'); //Importation ficher Routes/user.js // */
 
 const app = express(); //Utilisation Express //
 
@@ -15,21 +15,14 @@ app.use((req, res, next) => { // Middleware (CORS) //
   next();
 });
 
-//Connection Base de donnée //
-mongoose.connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0-1l7tk.gcp.mongodb.net/test?retryWrites=true&w=majority`,{
-    useNewUrlParser: true,  //deprecation warnings = avertissement fonctionnalité,biblio existante va être modifiée,supprimée,remplacée//
-    useUnifiedTopology: true,
-    useCreateIndex:true
-  })
-  .then(() => console.log('Connexion à MongoDB réussie !'))
-  .catch(() => console.log('Connexion à MongoDB échouée !'));
+require("./connection"); 
 
-
-
+app.use(helmet());
 app.use(bodyParser.json());
-app.use('/images', express.static(path.join(__dirname, 'images'))); // Application utilise Image //
-/* app.use('/api/sauces', sauceRoutes);
-app.use('/api/auth', userRoutes);  */
+app.use('/multimedia', express.static(path.join(__dirname, 'images'))); // Application utilise Image //
+/* app.use('/api/post', postRoutes); */
+app.use('/api/auth', userRoutes);
+
 
 
 module.exports = app; // Exportation pour le fichier server.js //
