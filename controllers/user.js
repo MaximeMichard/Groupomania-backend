@@ -80,7 +80,9 @@ exports.login = (req, res, next) => {
                             userId: user.id,
                             token: jwt.sign({userId: user.id},"BONJOUR1234",{
                                 expiresIn:"24h",
-                            })
+                            }
+                            ),
+                            isAdmin : user.isAdmin
                         })
                     } else {
                         res.status(403).json({ error: 'invalid password' });
@@ -97,15 +99,16 @@ exports.getUserProfile = async (req,res,next) => {
     try{
         let _userget= await models.User.findOne({
             where: { id: Number(req.params.id) },
-            attributes:{ exclude: ['password','isAdmin']} 
+            attributes:{ exclude: ['password']} 
         })
-        return res.status(200).json({ _userget});
+        return res.status(200).json( _userget);
         
     }
     catch(err){
         return res.status(404).json({ err});
     }
 }
+
 exports.updatePwd= (req,res,next) => {
   const newPassword = req.body.newPassword;
   if (schema.validate(newPassword)) {
@@ -141,7 +144,7 @@ exports.delete = async (req,res,next) => {
         let _userdelete = await  models.User.destroy({ // Supprimer le fichier de la BDD//
             where: { id: Number(req.params.id) }
         })
-        return res.status(200).json({ _userdelete }); 
+        return res.status(200).json( _userdelete ); 
     }
     catch(err){
         return res.status(500).json({ err});
